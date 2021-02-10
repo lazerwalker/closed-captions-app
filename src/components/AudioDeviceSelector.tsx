@@ -10,7 +10,7 @@ interface Props {
 export default function (props: Props) {
   const dispatch = useContext(DispatchContext);
 
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(switchAudioDeviceAction(e.target.value));
   };
 

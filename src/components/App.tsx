@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createContext, useEffect, useReducer } from "react";
 import * as ReactDOM from "react-dom";
+import { startOBS, sendObsCaption } from "../obs";
 import { Action, listAudioDevicesAction } from "../actions";
 import reducer, { initialState } from "../reducer";
 import { State } from "../reducer";
@@ -24,6 +25,7 @@ const App = () => {
       dispatch(listAudioDevicesAction(devices));
 
       setUpSpeechRecognizer(devices[0].deviceId, dispatch);
+      startOBS();
     }
     run();
   }, []);
@@ -31,6 +33,10 @@ const App = () => {
   useEffect(() => {
     setUpSpeechRecognizer(state.currentDeviceId, dispatch);
   }, [state.currentDeviceId]);
+
+  useEffect(() => {
+    sendObsCaption(state.currentCaption);
+  }, [state.currentCaption]);
 
   return (
     <DispatchContext.Provider value={dispatch}>

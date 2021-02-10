@@ -20,16 +20,16 @@ export async function setUpSpeechRecognizer(
   deviceId: string,
   dispatch: Dispatch<Action>
 ): Promise<void> {
-  if (recognizer) {
-    await recognizer.stopContinuousRecognitionAsync();
-  }
+  // if (recognizer) {
+  //   await recognizer.stopContinuousRecognitionAsync();
+  // }
 
   const audioConfig = sdk.AudioConfig.fromMicrophoneInput(deviceId);
   recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
   recognizer.recognizing = (s, e) => {
     console.log(`RECOGNIZING: Text=${e.result.text}`);
-    dispatch(addCaptionAction(e.result.text));
+    // dispatch(addCaptionAction(e.result.text));
   };
 
   recognizer.recognized = (s, e) => {
