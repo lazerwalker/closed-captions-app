@@ -12,6 +12,6 @@ export async function startOBS() {
   }
 }
 
-export async function sendObsCaption(text: string) {
+export function sendObsCaption(text: string) {
   obs.send("SendCaptions", { text });
 }

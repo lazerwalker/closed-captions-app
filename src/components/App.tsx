@@ -25,7 +25,7 @@ const App = () => {
       dispatch(listAudioDevicesAction(devices));
 
       setUpSpeechRecognizer(devices[0].deviceId, dispatch);
-      startOBS();
+      // startOBS();
     }
     run();
   }, []);
@@ -34,9 +34,13 @@ const App = () => {
     setUpSpeechRecognizer(state.currentDeviceId, dispatch);
   }, [state.currentDeviceId]);
 
-  useEffect(() => {
-    sendObsCaption(state.currentCaption);
-  }, [state.currentCaption]);
+  // OBS's SendCaptions function technically works,
+  // but is a bit janky and needs massaging.
+  // Let's focus on baked-in open captions for now and revisit later
+
+  // useEffect(() => {
+  //   sendObsCaption(state.currentCaption);
+  // }, [state.currentCaption]);
 
   return (
     <DispatchContext.Provider value={dispatch}>

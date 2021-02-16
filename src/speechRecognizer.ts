@@ -9,6 +9,8 @@ import {
 import { Dispatch } from "react";
 import { Action, addCaptionAction } from "./actions";
 
+// set up the Azure Cognitive Services Speech SDK to use subscription
+// data from environment variables (via .env or otherwise)
 const speechConfig = sdk.SpeechConfig.fromSubscription(
   process.env.COGNITIVE_SERVICES_KEY,
   process.env.COGNITIVE_SERVICES_REGION
@@ -29,7 +31,7 @@ export async function setUpSpeechRecognizer(
 
   recognizer.recognizing = (s, e) => {
     console.log(`RECOGNIZING: Text=${e.result.text}`);
-    // dispatch(addCaptionAction(e.result.text));
+    dispatch(addCaptionAction(e.result.text));
   };
 
   recognizer.recognized = (s, e) => {
