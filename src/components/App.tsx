@@ -1,13 +1,14 @@
 import * as React from "react";
 import { createContext, useEffect, useReducer } from "react";
 import * as ReactDOM from "react-dom";
-import { startOBS, sendObsCaption } from "../obs";
+// import { startOBS, sendObsCaption } from "../obs";
 import { Action, listAudioDevicesAction } from "../actions";
 import reducer, { initialState } from "../reducer";
 import { State } from "../reducer";
 import { setUpSpeechRecognizer } from "../speechRecognizer";
 import AudioDeviceSelector from "./AudioDeviceSelector";
 import CaptionView from "./CaptionView";
+import { startWebSocket, sendWebSocketMessage } from "../webSocket";
 
 export const DispatchContext = createContext(null);
 
@@ -26,6 +27,8 @@ const App = () => {
 
       setUpSpeechRecognizer(devices[0].deviceId, dispatch);
       // startOBS();
+
+      startWebSocket();
     }
     run();
   }, []);
@@ -41,6 +44,10 @@ const App = () => {
   // useEffect(() => {
   //   sendObsCaption(state.currentCaption);
   // }, [state.currentCaption]);
+
+  useEffect(() => {
+    sendWebSocketMessage(state.currentCaption);
+  }, [state.currentCaption]);
 
   return (
     <DispatchContext.Provider value={dispatch}>
