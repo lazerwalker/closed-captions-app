@@ -8,7 +8,8 @@ body {
   -webkit-app-region: drag;
 }
 
-select {
+select,
+input {
   -webkit-app-region: no-drag;
 }
 

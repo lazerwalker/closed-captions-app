@@ -4,10 +4,12 @@ export type State = {
   currentCaption?: string;
   audioDevices: MediaDeviceInfo[];
   currentDeviceId?: string;
+  userId: string;
 };
 
 export const initialState: State = {
   audioDevices: [],
+  userId: "some name",
 };
 
 export default (oldState: State, action: Action): State => {
@@ -23,6 +25,10 @@ export default (oldState: State, action: Action): State => {
 
   if (action.type === ActionType.SwitchAudioDevice) {
     state.currentDeviceId = action.value;
+  }
+
+  if (action.type === ActionType.ChangeName) {
+    state.userId = action.value;
   }
 
   return state;

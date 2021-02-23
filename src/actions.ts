@@ -1,12 +1,14 @@
 export type Action =
   | AddCaptionAction
   | ListAudioDevicesAction
-  | SwitchAudioDeviceAction;
+  | SwitchAudioDeviceAction
+  | ChangeNameAction;
 
 export enum ActionType {
   AddCaption = "addCaption",
   ListAudioDevices = "listAudioDevices",
   SwitchAudioDevice = "switchAudioDevice",
+  ChangeName = "changeName",
 }
 
 type AddCaptionAction = {
@@ -47,4 +49,13 @@ export function switchAudioDeviceAction(
     type: ActionType.SwitchAudioDevice,
     value: devices,
   };
+}
+
+type ChangeNameAction = {
+  type: ActionType.ChangeName;
+  value: string;
+};
+
+export function changeNameAction(name: string): ChangeNameAction {
+  return { type: ActionType.ChangeName, value: name };
 }

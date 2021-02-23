@@ -1,15 +1,20 @@
+// External Dependencies
 import * as React from "react";
 import { createContext, useEffect, useReducer } from "react";
 import * as ReactDOM from "react-dom";
+
 // import { startOBS, sendObsCaption } from "../obs";
 import { Action, listAudioDevicesAction } from "../actions";
 import reducer, { initialState } from "../reducer";
 import { State } from "../reducer";
 import { setUpSpeechRecognizer } from "../speechRecognizer";
-import AudioDeviceSelector from "./AudioDeviceSelector";
-import CaptionView from "./CaptionView";
 import { startWebSocket, sendWebSocketMessage } from "../webSocket";
 import { setUpSignalR, sendSignalRMessage } from "../signalR";
+
+// Our Elements
+import AudioDeviceSelector from "./AudioDeviceSelector";
+import CaptionView from "./CaptionView";
+import NameInputView from "./NameInputView";
 
 export const DispatchContext = createContext(null);
 
@@ -29,8 +34,7 @@ const App = () => {
       setUpSpeechRecognizer(devices[0].deviceId, dispatch);
       // startOBS();
 
-      await setUpSignalR();
-      console.log("We set up signalR");
+      setUpSignalR();
 
       startWebSocket();
     }
@@ -60,6 +64,7 @@ const App = () => {
         <h1>Captions!</h1>
         <AudioDeviceSelector devices={state.audioDevices} />
         <CaptionView caption={state.currentCaption} />
+        <NameInputView />
       </div>
     </DispatchContext.Provider>
   );

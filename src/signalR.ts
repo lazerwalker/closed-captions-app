@@ -1,15 +1,19 @@
 import * as signalR from "@microsoft/signalr";
-import { v4 as uuid } from "uuid";
 
-const userId = uuid();
+let userId: string;
+
+export function changedUserId(newUserId: string) {
+  userId = newUserId;
+}
 
 export async function setUpSignalR() {
   const connection = new signalR.HubConnectionBuilder()
     .withUrl("https://live-captions.azurewebsites.net/api")
     .build();
 
-  connection.on("text", (text, userId) => {
-    console.log(`${userId}: ${text}`);
+  connection.on("text", (text, id) => {
+    if (userId === id) return;
+    console.log(`${id}: ${text}`);
   });
 
   await connection.start();
