@@ -9,6 +9,7 @@ import { setUpSpeechRecognizer } from "../speechRecognizer";
 import AudioDeviceSelector from "./AudioDeviceSelector";
 import CaptionView from "./CaptionView";
 import { startWebSocket, sendWebSocketMessage } from "../webSocket";
+import { setUpSignalR, sendSignalRMessage } from "../signalR";
 
 export const DispatchContext = createContext(null);
 
@@ -27,6 +28,8 @@ const App = () => {
 
       setUpSpeechRecognizer(devices[0].deviceId, dispatch);
       // startOBS();
+
+      setUpSignalR();
 
       startWebSocket();
     }
@@ -47,6 +50,7 @@ const App = () => {
 
   useEffect(() => {
     sendWebSocketMessage(state.currentCaption);
+    sendSignalRMessage(state.currentCaption);
   }, [state.currentCaption]);
 
   return (
