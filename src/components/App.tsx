@@ -29,7 +29,8 @@ const App = () => {
       setUpSpeechRecognizer(devices[0].deviceId, dispatch);
       // startOBS();
 
-      setUpSignalR();
+      await setUpSignalR();
+      console.log("We set up signalR");
 
       startWebSocket();
     }

@@ -18,7 +18,7 @@ const httpTrigger: AzureFunction = async function (
   context.bindings.signalRMessages = [
     {
       target: "text",
-      value: [text, userId],
+      arguments: [text, userId],
     },
   ];
 };
