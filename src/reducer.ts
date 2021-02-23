@@ -2,6 +2,7 @@ import { Action, ActionType } from "./actions";
 
 export type State = {
   currentCaption?: string;
+  currentSpeaker?: string;
   audioDevices: MediaDeviceInfo[];
   currentDeviceId?: string;
   userId: string;
@@ -17,6 +18,7 @@ export default (oldState: State, action: Action): State => {
 
   if (action.type === ActionType.AddCaption) {
     state.currentCaption = action.value;
+    state.currentSpeaker = state.userId;
   }
 
   if (action.type === ActionType.ListAudioDevices) {
@@ -29,6 +31,11 @@ export default (oldState: State, action: Action): State => {
 
   if (action.type === ActionType.ChangeName) {
     state.userId = action.value;
+  }
+
+  if (action.type === ActionType.ReceivedRemoteCaption) {
+    state.currentCaption = action.value.text;
+    state.currentSpeaker = action.value.userId;
   }
 
   return state;

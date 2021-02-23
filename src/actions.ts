@@ -2,13 +2,15 @@ export type Action =
   | AddCaptionAction
   | ListAudioDevicesAction
   | SwitchAudioDeviceAction
-  | ChangeNameAction;
+  | ChangeNameAction
+  | ReceivedRemoteCaptionAction;
 
 export enum ActionType {
   AddCaption = "addCaption",
   ListAudioDevices = "listAudioDevices",
   SwitchAudioDevice = "switchAudioDevice",
   ChangeName = "changeName",
+  ReceivedRemoteCaption = "receivedRemoteCaption",
 }
 
 type AddCaptionAction = {
@@ -58,4 +60,22 @@ type ChangeNameAction = {
 
 export function changeNameAction(name: string): ChangeNameAction {
   return { type: ActionType.ChangeName, value: name };
+}
+
+type ReceivedRemoteCaptionAction = {
+  type: ActionType.ReceivedRemoteCaption;
+  value: {
+    userId: string;
+    text: string;
+  };
+};
+
+export function receivedRemoteCaptionAction(
+  userId: string,
+  text: string
+): ReceivedRemoteCaptionAction {
+  return {
+    type: ActionType.ReceivedRemoteCaption,
+    value: { userId, text },
+  };
 }

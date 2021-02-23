@@ -34,7 +34,7 @@ const App = () => {
       setUpSpeechRecognizer(devices[0].deviceId, dispatch);
       // startOBS();
 
-      setUpSignalR();
+      setUpSignalR(dispatch);
 
       startWebSocket();
     }
@@ -63,7 +63,10 @@ const App = () => {
       <div>
         <h1>Captions!</h1>
         <AudioDeviceSelector devices={state.audioDevices} />
-        <CaptionView caption={state.currentCaption} />
+        <CaptionView
+          caption={state.currentCaption}
+          speaker={state.currentSpeaker}
+        />
         <NameInputView />
       </div>
     </DispatchContext.Provider>
