@@ -50,7 +50,9 @@ export default (oldState: State, action: Action): State => {
     });
 
     if (matchingCaptionIndex !== -1) {
-      state.renderCaptions[matchingCaptionIndex] = action.value;
+      if (!state.renderCaptions[matchingCaptionIndex].isCompleted) {
+        state.renderCaptions[matchingCaptionIndex] = action.value;
+      }
     } else {
       state.renderCaptions.unshift(action.value);
 
