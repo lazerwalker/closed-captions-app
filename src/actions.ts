@@ -1,3 +1,5 @@
+import { Caption } from "./reducer";
+
 export type Action =
   | AddCaptionAction
   | ListAudioDevicesAction
@@ -15,10 +17,10 @@ export enum ActionType {
 
 type AddCaptionAction = {
   type: ActionType.AddCaption;
-  value: string;
+  value: Caption;
 };
 
-export function addCaptionAction(caption: string): AddCaptionAction {
+export function addCaptionAction(caption: Caption): AddCaptionAction {
   return {
     type: ActionType.AddCaption,
     value: caption,
@@ -64,18 +66,14 @@ export function changeNameAction(name: string): ChangeNameAction {
 
 type ReceivedRemoteCaptionAction = {
   type: ActionType.ReceivedRemoteCaption;
-  value: {
-    userId: string;
-    text: string;
-  };
+  value: Caption;
 };
 
 export function receivedRemoteCaptionAction(
-  userId: string,
-  text: string
+  caption: Caption
 ): ReceivedRemoteCaptionAction {
   return {
     type: ActionType.ReceivedRemoteCaption,
-    value: { userId, text },
+    value: caption,
   };
 }

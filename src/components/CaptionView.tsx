@@ -1,15 +1,15 @@
 import * as React from "react";
+import { Caption } from "../reducer";
 
 interface Props {
-  caption: string;
-  speaker: string;
+  caption: Caption;
 }
 
 export default function (props: Props) {
   return (
     <p id="captions">
-      <strong>{props.speaker}:&nbsp;</strong>
-      {props.caption}
+      <strong>{props.caption.userId}:&nbsp;</strong>
+      {props.caption.text}
     </p>
   );
 }

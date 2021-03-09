@@ -11,7 +11,6 @@ import { setUpSpeechRecognizer } from "../speechRecognizer";
 import { startWebSocket, sendWebSocketMessage } from "../webSocket";
 import { setUpSignalR, sendSignalRMessage } from "../signalR";
 
-// Our Elements
 import AudioDeviceSelector from "./AudioDeviceSelector";
 import CaptionView from "./CaptionView";
 import NameInputView from "./NameInputView";
@@ -31,10 +30,9 @@ const App = () => {
       );
       dispatch(listAudioDevicesAction(devices));
 
-      setUpSpeechRecognizer(devices[0].deviceId, dispatch);
       // startOBS();
 
-      setUpSignalR(dispatch);
+      setUpSignalR(dispatch, state.userId);
 
       startWebSocket();
     }
@@ -42,7 +40,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    setUpSpeechRecognizer(state.currentDeviceId, dispatch);
+    setUpSpeechRecognizer(state.currentDeviceId, dispatch, state.userId);
   }, [state.currentDeviceId]);
 
   // OBS's SendCaptions function technically works,
@@ -54,19 +52,18 @@ const App = () => {
   // }, [state.currentCaption]);
 
   useEffect(() => {
-    sendWebSocketMessage(state.currentCaption);
-    sendSignalRMessage(state.currentCaption);
-  }, [state.currentCaption]);
+    sendWebSocketMessage(state.currentLocalCaption);
+    sendSignalRMessage(state.currentLocalCaption);
+  }, [state.currentLocalCaption]);
 
   return (
     <DispatchContext.Provider value={dispatch}>
       <div>
         <h1>Captions!</h1>
         <AudioDeviceSelector devices={state.audioDevices} />
-        <CaptionView
-          caption={state.currentCaption}
-          speaker={state.currentSpeaker}
-        />
+        {state.currentLocalCaption ? (
+          <CaptionView caption={state.currentLocalCaption} />
+        ) : null}
         <NameInputView />
       </div>
     </DispatchContext.Provider>

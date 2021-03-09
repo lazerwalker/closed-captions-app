@@ -1,4 +1,4 @@
-import { ConsoleLoggingListener } from "microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.browser/Exports";
+import { Caption } from "./reducer";
 
 require("dotenv").config();
 
@@ -12,8 +12,8 @@ export function startWebSocket(): void {
   };
 }
 
-export function sendWebSocketMessage(message: string): void {
+export function sendWebSocketMessage(message: Caption): void {
   // WebSocket.readyState 1 is "OPEN"
   if (!ws || ws.readyState !== 1) return;
-  ws.send(message);
+  ws.send(`${message.userId}: ${message.text}`);
 }

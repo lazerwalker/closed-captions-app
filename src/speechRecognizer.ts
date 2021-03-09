@@ -1,13 +1,15 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 require("dotenv").config();
 
+/* eslint-disable @typescript-eslint/no-var-requires */
+import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import {
   ResultReason,
   CancellationReason,
 } from "microsoft-cognitiveservices-speech-sdk";
 import { Dispatch } from "react";
+
 import { Action, addCaptionAction } from "./actions";
+import { Caption } from "./reducer";
 
 // set up the Azure Cognitive Services Speech SDK to use subscription
 // data from environment variables (via .env or otherwise)
@@ -18,44 +20,79 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
 
 let recognizer: sdk.SpeechRecognizer | undefined;
 
+function recognizerResultToCaption(
+  result: sdk.SpeechRecognitionResult,
+  userId: string
+): Caption {
+  console.log(result);
+  return {
+    userId,
+    text: result.text,
+    // 3 = recognized (instead of recognizing)
+    isCompleted: result.reason === 3,
+    phraseId: result.resultId,
+  };
+}
+
 export async function setUpSpeechRecognizer(
   deviceId: string,
-  dispatch: Dispatch<Action>
+  dispatch: Dispatch<Action>,
+  userId: string
 ): Promise<void> {
-  // if (recognizer) {
-  //   await recognizer.stopContinuousRecognitionAsync();
-  // }
+  if (recognizer) {
+    // This was failing when we called it immediately after starting recognition
+    // There may be some status/internal state we can query for before trying to stop
+    await recognizer.stopContinuousRecognitionAsync();
+  }
 
+  console.log("Set up speech recognizer");
   const audioConfig = sdk.AudioConfig.fromMicrophoneInput(deviceId);
   recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
-  recognizer.recognizing = (s, e) => {
-    console.log(`RECOGNIZING: Text=${e.result.text}`);
-    dispatch(addCaptionAction(e.result.text));
+  recognizer.recognizing = (speechRecognizerObject, speechRecognizerEvent) => {
+    console.log(
+      `RECOGNIZING ${speechRecognizerEvent.result.resultId}: Text=${speechRecognizerEvent.result.text}`
+    );
+    console.log(speechRecognizerEvent.result);
+    dispatch(
+      addCaptionAction(
+        recognizerResultToCaption(speechRecognizerEvent.result, userId)
+      )
+    );
   };
 
-  recognizer.recognized = (s, e) => {
-    if (e.result.reason == ResultReason.RecognizedSpeech) {
-      console.log(`RECOGNIZED: Text=${e.result.text}`);
-      dispatch(addCaptionAction(e.result.text));
-    } else if (e.result.reason == ResultReason.NoMatch) {
+  recognizer.recognized = (speechRecognizerObject, speechRecognizerEvent) => {
+    if (speechRecognizerEvent.result.reason == ResultReason.RecognizedSpeech) {
+      console.log(`RECOGNIZED: Text=${speechRecognizerEvent.result.text}`);
+      console.log(speechRecognizerEvent.result);
+      dispatch(
+        addCaptionAction(
+          recognizerResultToCaption(speechRecognizerEvent.result, userId)
+        )
+      );
+    } else if (speechRecognizerEvent.result.reason == ResultReason.NoMatch) {
       console.log("NOMATCH: Speech could not be recognized.");
     }
   };
 
-  recognizer.canceled = (s, e) => {
-    console.log(`CANCELED: Reason=${e.reason}`);
+  recognizer.canceled = (speechRecognizerObject, speechRecognizerEvent) => {
+    console.log(`CANCELED: Reason=${speechRecognizerEvent.reason}`);
 
-    if (e.reason == CancellationReason.Error) {
-      console.log(`"CANCELED: ErrorCode=${e.errorCode}`);
-      console.log(`"CANCELED: ErrorDetails=${e.errorDetails}`);
+    if (speechRecognizerEvent.reason == CancellationReason.Error) {
+      console.log(`"CANCELED: ErrorCode=${speechRecognizerEvent.errorCode}`);
+      console.log(
+        `"CANCELED: ErrorDetails=${speechRecognizerEvent.errorDetails}`
+      );
       console.log("CANCELED: Did you update the subscription info?");
     }
 
     recognizer.stopContinuousRecognitionAsync();
   };
 
-  recognizer.sessionStopped = (s, e) => {
+  recognizer.sessionStopped = (
+    speechRecognizerObject,
+    speechRecognizerEvent
+  ) => {
     console.log("\n    Session stopped event.");
     recognizer.stopContinuousRecognitionAsync();
   };

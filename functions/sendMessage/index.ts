@@ -4,10 +4,12 @@ const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
-  const text = req.body && req.body.text;
-  const userId = req.body && req.body.userId;
+  const caption = req.body.caption;
 
-  if (!text || !userId) {
+  // We're not validating that some properties exist
+  // (e.g. phraseId, isCompleted)
+  // I don't think we need to, but worth noting
+  if (!caption.text || !caption.userId) {
     context.res = {
       status: 400,
       body: "Include a message and a user ID!",
@@ -18,7 +20,7 @@ const httpTrigger: AzureFunction = async function (
   context.bindings.signalRMessages = [
     {
       target: "text",
-      arguments: [text, userId],
+      arguments: [caption],
     },
   ];
 };

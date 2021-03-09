@@ -1,24 +1,33 @@
+import { v4 as uuid } from "uuid";
+
 import { Action, ActionType } from "./actions";
+export type Caption = {
+  userId: string;
+  text: string;
+  phraseId: string;
+  isCompleted: boolean;
+};
 
 export type State = {
-  currentCaption?: string;
-  currentSpeaker?: string;
+  currentLocalCaption?: Caption;
+  renderCaptions: Caption[];
   audioDevices: MediaDeviceInfo[];
   currentDeviceId?: string;
   userId: string;
+  displayName?: string;
 };
 
 export const initialState: State = {
   audioDevices: [],
-  userId: "some name",
+  userId: uuid(),
+  renderCaptions: [],
 };
 
 export default (oldState: State, action: Action): State => {
   const state = JSON.parse(JSON.stringify(oldState));
 
   if (action.type === ActionType.AddCaption) {
-    state.currentCaption = action.value;
-    state.currentSpeaker = state.userId;
+    state.currentLocalCaption = action.value;
   }
 
   if (action.type === ActionType.ListAudioDevices) {
@@ -34,8 +43,7 @@ export default (oldState: State, action: Action): State => {
   }
 
   if (action.type === ActionType.ReceivedRemoteCaption) {
-    state.currentCaption = action.value.text;
-    state.currentSpeaker = action.value.userId;
+    state.currentLocalCaption = action.value;
   }
 
   return state;

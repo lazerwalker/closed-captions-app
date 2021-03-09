@@ -9,7 +9,7 @@ type CaptionAction = {
   value: string
 }
 
-export const createCaptionAction = (message: string): CaptionAction {
+export const createCaptionAction = (caption: Caption): CaptionAction {
   return {
     type: ActionType.Caption,
     value: message
