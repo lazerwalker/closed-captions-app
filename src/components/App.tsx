@@ -56,14 +56,16 @@ const App = () => {
     sendSignalRMessage(state.currentLocalCaption);
   }, [state.currentLocalCaption]);
 
+  const captionViews = state.renderCaptions.map((caption) => {
+    return <CaptionView caption={caption} />;
+  });
+
   return (
     <DispatchContext.Provider value={dispatch}>
       <div>
         <h1>Captions!</h1>
         <AudioDeviceSelector devices={state.audioDevices} />
-        {state.currentLocalCaption ? (
-          <CaptionView caption={state.currentLocalCaption} />
-        ) : null}
+        {captionViews}
         <NameInputView />
       </div>
     </DispatchContext.Provider>

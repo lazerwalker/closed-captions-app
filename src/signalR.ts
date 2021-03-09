@@ -12,7 +12,6 @@ export async function setUpSignalR(
     .build();
 
   connection.on("text", (caption: Caption) => {
-    if (userId === caption.userId) return;
     dispatch(receivedRemoteCaptionAction(caption));
   });
 

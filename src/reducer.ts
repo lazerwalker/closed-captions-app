@@ -8,6 +8,8 @@ export type Caption = {
   isCompleted: boolean;
 };
 
+const MAX_CAPTIONS_ON_SCREEN = 3;
+
 export type State = {
   currentLocalCaption?: Caption;
   renderCaptions: Caption[];
@@ -24,7 +26,7 @@ export const initialState: State = {
 };
 
 export default (oldState: State, action: Action): State => {
-  const state = JSON.parse(JSON.stringify(oldState));
+  const state: State = JSON.parse(JSON.stringify(oldState));
 
   if (action.type === ActionType.AddCaption) {
     state.currentLocalCaption = action.value;
@@ -43,7 +45,22 @@ export default (oldState: State, action: Action): State => {
   }
 
   if (action.type === ActionType.ReceivedRemoteCaption) {
-    state.currentLocalCaption = action.value;
+    const matchingCaptionIndex = state.renderCaptions.findIndex((caption) => {
+      return caption.phraseId === action.value.phraseId;
+    });
+
+    if (matchingCaptionIndex !== -1) {
+      state.renderCaptions[matchingCaptionIndex] = action.value;
+    } else {
+      state.renderCaptions.unshift(action.value);
+
+      if (state.renderCaptions.length > MAX_CAPTIONS_ON_SCREEN) {
+        state.renderCaptions = state.renderCaptions.slice(
+          0,
+          MAX_CAPTIONS_ON_SCREEN
+        );
+      }
+    }
   }
 
   return state;
