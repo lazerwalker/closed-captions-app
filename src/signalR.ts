@@ -6,6 +6,7 @@ import {
   updateDisplayNameAction,
 } from "./actions";
 import { Caption } from "./reducer";
+import { sendWebSocketCaption, sendWebSocketDisplayName } from "./webSocket";
 
 export async function setUpSignalR(dispatch: Dispatch<Action>): Promise<void> {
   const connection = new signalR.HubConnectionBuilder()
@@ -14,10 +15,12 @@ export async function setUpSignalR(dispatch: Dispatch<Action>): Promise<void> {
 
   connection.on("text", (caption: Caption) => {
     dispatch(receivedRemoteCaptionAction(caption));
+    sendWebSocketCaption(caption);
   });
 
   connection.on("updateDisplayName", (displayName: string, userId: string) => {
     dispatch(updateDisplayNameAction(displayName, userId));
+    sendWebSocketDisplayName(displayName, userId);
   });
 
   await connection.start();

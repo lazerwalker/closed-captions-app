@@ -11,7 +11,7 @@ import {
   addSpeechRecognizerListener,
   setUpSpeechRecognizer,
 } from "../speechRecognizer";
-import { startWebSocket, sendWebSocketMessage } from "../webSocket";
+import { startWebSocket } from "../webSocket";
 import { setUpSignalR, sendSignalRMessage } from "../signalR";
 
 import AudioDeviceSelector from "./AudioDeviceSelector";
@@ -35,7 +35,7 @@ const App = () => {
 
       // startOBS();
 
-      setUpSignalR(dispatch, state.userId);
+      setUpSignalR(dispatch);
 
       startWebSocket();
     }

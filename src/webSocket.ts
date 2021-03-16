@@ -12,8 +12,17 @@ export function startWebSocket(): void {
   };
 }
 
-export function sendWebSocketMessage(message: Caption): void {
+export function sendWebSocketCaption(caption: Caption): void {
   // WebSocket.readyState 1 is "OPEN"
   if (!ws || ws.readyState !== 1) return;
-  ws.send(`${message.userId}: ${message.text}`);
+  ws.send(JSON.stringify({ caption }));
+}
+
+export function sendWebSocketDisplayName(
+  displayName: string,
+  userId: string
+): void {
+  // WebSocket.readyState 1 is "OPEN"
+  if (!ws || ws.readyState !== 1) return;
+  ws.send(JSON.stringify({ displayNameMapping: { displayName, userId } }));
 }
