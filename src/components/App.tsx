@@ -58,7 +58,7 @@ const App = () => {
   // }, [state.currentCaption]);
 
   const captionViews = state.renderCaptions.map((caption) => {
-    return <CaptionView caption={caption} />;
+    return <CaptionView key={caption.phraseId} caption={caption} />;
   });
 
   return (

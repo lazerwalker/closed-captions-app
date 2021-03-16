@@ -7,6 +7,7 @@ import {
   CancellationReason,
 } from "microsoft-cognitiveservices-speech-sdk";
 import { Dispatch } from "react";
+import { v4 as uuid } from "uuid";
 
 import { Action, addCaptionAction } from "./actions";
 import { Caption } from "./reducer";
@@ -20,6 +21,8 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
 
 let recognizer: sdk.SpeechRecognizer | undefined;
 
+let currentPhraseId: string = uuid();
+
 function recognizerResultToCaption(
   result: sdk.SpeechRecognitionResult,
   userId: string
@@ -30,7 +33,7 @@ function recognizerResultToCaption(
     text: result.text,
     // 3 = recognized (instead of recognizing)
     isCompleted: result.reason === 3,
-    phraseId: result.resultId,
+    phraseId: currentPhraseId,
   };
 }
 
@@ -82,6 +85,7 @@ export async function setUpSpeechRecognizer(
     } else if (speechRecognizerEvent.result.reason == ResultReason.NoMatch) {
       console.log("NOMATCH: Speech could not be recognized.");
     }
+    currentPhraseId = uuid();
   };
 
   recognizer.canceled = (speechRecognizerObject, speechRecognizerEvent) => {
