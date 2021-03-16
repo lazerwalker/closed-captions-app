@@ -34,6 +34,15 @@ function recognizerResultToCaption(
   };
 }
 
+type SpeechRecognizerListener = (caption: Caption) => void;
+const listeners: SpeechRecognizerListener[] = [];
+
+export function addSpeechRecognizerListener(
+  fn: SpeechRecognizerListener
+): void {
+  listeners.push(fn);
+}
+
 export async function setUpSpeechRecognizer(
   deviceId: string,
   dispatch: Dispatch<Action>,
@@ -53,23 +62,23 @@ export async function setUpSpeechRecognizer(
     console.log(
       `RECOGNIZING ${speechRecognizerEvent.result.resultId}: Text=${speechRecognizerEvent.result.text}`
     );
-    console.log(speechRecognizerEvent.result);
-    dispatch(
-      addCaptionAction(
-        recognizerResultToCaption(speechRecognizerEvent.result, userId)
-      )
+    const message = recognizerResultToCaption(
+      speechRecognizerEvent.result,
+      userId
     );
+    dispatch(addCaptionAction(message));
+    listeners.forEach((fn) => fn(message));
   };
 
   recognizer.recognized = (speechRecognizerObject, speechRecognizerEvent) => {
     if (speechRecognizerEvent.result.reason == ResultReason.RecognizedSpeech) {
       console.log(`RECOGNIZED: Text=${speechRecognizerEvent.result.text}`);
-      console.log(speechRecognizerEvent.result);
-      dispatch(
-        addCaptionAction(
-          recognizerResultToCaption(speechRecognizerEvent.result, userId)
-        )
+      const message = recognizerResultToCaption(
+        speechRecognizerEvent.result,
+        userId
       );
+      dispatch(addCaptionAction(message));
+      listeners.forEach((fn) => fn(message));
     } else if (speechRecognizerEvent.result.reason == ResultReason.NoMatch) {
       console.log("NOMATCH: Speech could not be recognized.");
     }

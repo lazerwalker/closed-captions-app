@@ -5,9 +5,12 @@ import * as ReactDOM from "react-dom";
 
 // import { startOBS, sendObsCaption } from "../obs";
 import { Action, listAudioDevicesAction } from "../actions";
-import reducer, { initialState } from "../reducer";
+import reducer, { Caption, initialState } from "../reducer";
 import { State } from "../reducer";
-import { setUpSpeechRecognizer } from "../speechRecognizer";
+import {
+  addSpeechRecognizerListener,
+  setUpSpeechRecognizer,
+} from "../speechRecognizer";
 import { startWebSocket, sendWebSocketMessage } from "../webSocket";
 import { setUpSignalR, sendSignalRMessage } from "../signalR";
 
@@ -41,6 +44,9 @@ const App = () => {
 
   useEffect(() => {
     setUpSpeechRecognizer(state.currentDeviceId, dispatch, state.userId);
+    addSpeechRecognizerListener((caption: Caption) => {
+      sendSignalRMessage(caption);
+    });
   }, [state.currentDeviceId]);
 
   // OBS's SendCaptions function technically works,
@@ -50,11 +56,6 @@ const App = () => {
   // useEffect(() => {
   //   sendObsCaption(state.currentCaption);
   // }, [state.currentCaption]);
-
-  useEffect(() => {
-    sendWebSocketMessage(state.currentLocalCaption);
-    sendSignalRMessage(state.currentLocalCaption);
-  }, [state.currentLocalCaption]);
 
   const captionViews = state.renderCaptions.map((caption) => {
     return <CaptionView caption={caption} />;
