@@ -17,12 +17,14 @@ export type State = {
   currentDeviceId?: string;
   userId: string;
   displayName?: string;
+  displayNameMapping: { [userId: string]: string };
 };
 
 export const initialState: State = {
   audioDevices: [],
   userId: uuid(),
   renderCaptions: [],
+  displayNameMapping: {},
 };
 
 export default (oldState: State, action: Action): State => {
@@ -40,8 +42,8 @@ export default (oldState: State, action: Action): State => {
     state.currentDeviceId = action.value;
   }
 
-  if (action.type === ActionType.ChangeName) {
-    state.userId = action.value;
+  if (action.type === ActionType.UpdateDisplayName) {
+    state.displayNameMapping[action.value.userId] = action.value.displayName;
   }
 
   if (action.type === ActionType.ReceivedRemoteCaption) {
@@ -50,9 +52,9 @@ export default (oldState: State, action: Action): State => {
     });
 
     if (matchingCaptionIndex !== -1) {
-      if (!state.renderCaptions[matchingCaptionIndex].isCompleted) {
-        state.renderCaptions[matchingCaptionIndex] = action.value;
-      }
+      // if (!state.renderCaptions[matchingCaptionIndex].isCompleted) {
+      state.renderCaptions[matchingCaptionIndex] = action.value;
+      // }
     } else {
       state.renderCaptions.unshift(action.value);
 
@@ -63,6 +65,7 @@ export default (oldState: State, action: Action): State => {
         );
       }
     }
+    console.log(state.renderCaptions);
   }
 
   return state;

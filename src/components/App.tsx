@@ -58,7 +58,13 @@ const App = () => {
   // }, [state.currentCaption]);
 
   const captionViews = state.renderCaptions.map((caption) => {
-    return <CaptionView key={caption.phraseId} caption={caption} />;
+    return (
+      <CaptionView
+        key={caption.phraseId}
+        caption={caption}
+        displayNameMapping={state.displayNameMapping}
+      />
+    );
   });
 
   return (
@@ -67,7 +73,7 @@ const App = () => {
         <h1>Captions!</h1>
         <AudioDeviceSelector devices={state.audioDevices} />
         {captionViews}
-        <NameInputView />
+        <NameInputView userId={state.userId} />
       </div>
     </DispatchContext.Provider>
   );

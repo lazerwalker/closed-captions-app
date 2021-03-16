@@ -1,23 +1,18 @@
 import * as React from "react";
-import { useState, useContext } from "react";
-import { DispatchContext } from "./App";
-import { changeNameAction } from "../actions";
+import { updateDisplayName } from "../signalR";
 
-export default function (props: {}) {
-  const dispatch = useContext(DispatchContext);
+export default function (props: { userId: string }) {
+  const inputRef = React.createRef<HTMLInputElement>();
 
-  const [userId, setUserId] = useState("some name");
-
-  const userIdChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserId(event.target.value);
-    // dispatch(changeNameAction(event.target.value));
-    // changedUserId(event.target.value);
+  const displayNameChanged = (event: React.MouseEvent) => {
+    updateDisplayName(inputRef.current.value, props.userId);
   };
 
   return (
     <div className="self">
       <label htmlFor="userId">Your Name:</label>
-      <input type="text" id="userId" value={userId} onChange={userIdChanged} />
+      <input type="text" id="userId" ref={inputRef} />
+      <button onClick={displayNameChanged}>Update</button>
     </div>
   );
 }

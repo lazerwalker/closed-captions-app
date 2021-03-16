@@ -4,14 +4,14 @@ export type Action =
   | AddCaptionAction
   | ListAudioDevicesAction
   | SwitchAudioDeviceAction
-  | ChangeNameAction
+  | UpdateDisplayNameAction
   | ReceivedRemoteCaptionAction;
 
 export enum ActionType {
   AddCaption = "addCaption",
   ListAudioDevices = "listAudioDevices",
   SwitchAudioDevice = "switchAudioDevice",
-  ChangeName = "changeName",
+  UpdateDisplayName = "UpdateDisplayNameAction",
   ReceivedRemoteCaption = "receivedRemoteCaption",
 }
 
@@ -55,13 +55,16 @@ export function switchAudioDeviceAction(
   };
 }
 
-type ChangeNameAction = {
-  type: ActionType.ChangeName;
-  value: string;
+type UpdateDisplayNameAction = {
+  type: ActionType.UpdateDisplayName;
+  value: { displayName: string; userId: string };
 };
 
-export function changeNameAction(name: string): ChangeNameAction {
-  return { type: ActionType.ChangeName, value: name };
+export function updateDisplayNameAction(
+  displayName: string,
+  userId: string
+): UpdateDisplayNameAction {
+  return { type: ActionType.UpdateDisplayName, value: { displayName, userId } };
 }
 
 type ReceivedRemoteCaptionAction = {
