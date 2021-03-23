@@ -35,7 +35,7 @@ const App = () => {
 
       // startOBS();
 
-      setUpSignalR(dispatch);
+      setUpSignalR(state.userId, dispatch);
 
       startWebSocket();
     }
