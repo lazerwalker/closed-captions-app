@@ -6,11 +6,13 @@ import {
 
 const connections: { [userId: string]: RTCPeerConnection } = {};
 
+const iceServers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
 export async function initiateWebRTCConnection(
   userId: string,
   recipient: string
 ): Promise<void> {
-  const peerConnection = new RTCPeerConnection();
+  const peerConnection = new RTCPeerConnection(iceServers);
   peerConnection.addEventListener("icecandidate", (event) => {
     console.log("Received Ice candidate for recipient", recipient);
     console.log(event);
@@ -29,7 +31,7 @@ export async function handleSentConnectionOffer(
 ): Promise<void> {
   // set local description
   // set remote description
-  const peerConnection = new RTCPeerConnection();
+  const peerConnection = new RTCPeerConnection(iceServers);
   peerConnection.addEventListener("icecandidate", (event) => {
     console.log("Received Ice candidate for sender", sender);
     console.log(event);
