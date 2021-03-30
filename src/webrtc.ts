@@ -6,18 +6,22 @@ import {
 
 const connections: { [userId: string]: RTCPeerConnection } = {};
 
-export async function initiateWebRTCConnection(userId: string): Promise<void> {
+export async function initiateWebRTCConnection(
+  userId: string,
+  recipient: string
+): Promise<void> {
   const peerConnection = new RTCPeerConnection();
   peerConnection.addEventListener("icecandidate", (event) => {
-    sendIceCandidate(userId, event.candidate);
+    sendIceCandidate(userId, recipient, event.candidate);
   });
   connections[userId] = peerConnection;
   const connectionOffer = await peerConnection.createOffer();
   peerConnection.setLocalDescription(connectionOffer);
-  sendWebRTCConnectionOffer(userId, connectionOffer);
+  sendWebRTCConnectionOffer(userId, recipient, connectionOffer);
 }
 
 export async function handleSentConnectionOffer(
+  userId: string,
   sender: string,
   offer: RTCSessionDescription
 ): Promise<void> {
@@ -25,7 +29,7 @@ export async function handleSentConnectionOffer(
   // set remote description
   const peerConnection = new RTCPeerConnection();
   peerConnection.addEventListener("icecandidate", (event) => {
-    sendIceCandidate(sender, event.candidate);
+    sendIceCandidate(userId, sender, event.candidate);
   });
 
   connections[sender] = peerConnection;
@@ -34,7 +38,7 @@ export async function handleSentConnectionOffer(
 
   const answer = await peerConnection.createAnswer();
   peerConnection.setLocalDescription(answer);
-  sendWebRTCConnectionAnswer(sender, answer);
+  sendWebRTCConnectionAnswer(userId, sender, answer);
 }
 
 export async function handleSentConnectionAnswer(

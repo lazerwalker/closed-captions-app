@@ -37,12 +37,12 @@ export async function setUpSignalR(
 
   connection.on("broadcast", (broadcastUserId: string) => {
     if (userId === broadcastUserId) return;
-    initiateWebRTCConnection(broadcastUserId);
+    initiateWebRTCConnection(userId, broadcastUserId);
   });
 
   connection.on("receiveOffer", (sender: string, offerJSON: string) => {
     const offer = new RTCSessionDescription(JSON.parse(offerJSON));
-    handleSentConnectionOffer(sender, offer);
+    handleSentConnectionOffer(userId, sender, offer);
   });
 
   connection.on("receiveAnswer", (sender: string, answerJSON: string) => {
@@ -71,53 +71,66 @@ export async function setUpSignalR(
   await connection.start();
 }
 
+export async function broadcastConnection(userId: string): Promise<Response> {
+  return makeRequest("broadcastConnection", userId);
+}
+
 export async function sendWebRTCConnectionAnswer(
   userId: string,
+  recipient: string,
   connectionAnswer: RTCSessionDescriptionInit
 ): Promise<Response> {
-  return makeRequest("sendConnectionAnswer", {
-    recipient: userId,
+  return makeRequest("sendConnectionAnswer", userId, {
+    recipient,
     answer: JSON.stringify(connectionAnswer, null, 2),
   });
 }
 
 export async function sendWebRTCConnectionOffer(
   userId: string,
+  recipient: string,
   connectionOffer: RTCSessionDescriptionInit
 ): Promise<Response> {
-  return makeRequest("sendConnectionOffer", {
-    recipient: userId,
+  return makeRequest("sendConnectionOffer", userId, {
+    recipient,
     offer: JSON.stringify(connectionOffer, null, 2),
   });
 }
 
-export async function sendSignalRMessage(caption: Caption): Promise<Response> {
+export async function sendSignalRMessage(caption: Caption): Promise<void> {
   // return makeRequest("sendMessage", { caption });
 }
 
+// TODO: We're not calling this!
 export async function updateDisplayName(
   displayName: string,
   userId: string
 ): Promise<Response> {
-  return makeRequest("updateDisplayName", { displayName, userId });
+  return makeRequest("updateDisplayName", userId, { displayName, userId });
 }
 
 export async function sendIceCandidate(
+  userId: string,
   recipient: string,
   candidate: RTCIceCandidate
 ): Promise<Response> {
-  return makeRequest("sendIceCandidate", {
-    recipient: recipient,
+  return makeRequest("sendIceCandidate", userId, {
+    recipient,
     candidate: JSON.stringify(candidate, null, 2),
   });
 }
 
-async function makeRequest(endpoint: string, body: any): Promise<Response> {
+async function makeRequest(
+  endpoint: string,
+  userId: string,
+  body?: any
+): Promise<Response> {
   return fetch(`https://live-captions.azurewebsites.net/api/${endpoint}`, {
     method: "POST",
     mode: "cors",
     headers: {
       "Content-Type": "application/json",
+      "x-ms-client-principal-id": userId,
     },
     body: JSON.stringify(body),
   });

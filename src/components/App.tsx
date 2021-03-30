@@ -12,7 +12,11 @@ import {
   setUpSpeechRecognizer,
 } from "../speechRecognizer";
 import { startWebSocket } from "../webSocket";
-import { setUpSignalR, sendSignalRMessage } from "../signalR";
+import {
+  setUpSignalR,
+  sendSignalRMessage,
+  broadcastConnection,
+} from "../signalR";
 
 import AudioDeviceSelector from "./AudioDeviceSelector";
 import CaptionView from "./CaptionView";
@@ -38,6 +42,8 @@ const App = () => {
       setUpSignalR(state.userId, dispatch);
 
       startWebSocket();
+
+      broadcastConnection(state.userId);
     }
     run();
   }, []);
