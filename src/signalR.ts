@@ -67,6 +67,7 @@ export async function setUpSignalR(
 }
 
 export async function broadcastConnection(userId: string): Promise<Response> {
+  console.log("Broadcasting connection as ", userId);
   return makeRequest("broadcastConnection", userId);
 }
 
@@ -75,6 +76,7 @@ export async function sendWebRTCConnectionAnswer(
   recipient: string,
   connectionAnswer: RTCSessionDescriptionInit
 ): Promise<Response> {
+  console.log("Sending answer to ", recipient);
   return makeRequest("sendConnectionAnswer", userId, {
     recipient,
     answer: JSON.stringify(connectionAnswer, null, 2),
@@ -86,6 +88,7 @@ export async function sendWebRTCConnectionOffer(
   recipient: string,
   connectionOffer: RTCSessionDescriptionInit
 ): Promise<Response> {
+  console.log("Sending connection offer to ", recipient);
   return makeRequest("sendConnectionOffer", userId, {
     recipient,
     offer: JSON.stringify(connectionOffer, null, 2),
@@ -109,6 +112,8 @@ export async function sendIceCandidate(
   recipient: string,
   candidate: RTCIceCandidate
 ): Promise<Response> {
+  console.log("Sending Ice candidate to ", recipient);
+
   return makeRequest("sendIceCandidate", userId, {
     recipient,
     candidate: JSON.stringify(candidate, null, 2),
