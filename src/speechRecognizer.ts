@@ -12,6 +12,8 @@ import { v4 as uuid } from "uuid";
 import { Action, addCaptionAction } from "./actions";
 import { Caption } from "./reducer";
 
+const enableLogging = false;
+
 // set up the Azure Cognitive Services Speech SDK to use subscription
 // data from environment variables (via .env or otherwise)
 const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -27,7 +29,7 @@ function recognizerResultToCaption(
   result: sdk.SpeechRecognitionResult,
   userId: string
 ): Caption {
-  console.log(result);
+  if (enableLogging) console.log(result);
   return {
     userId,
     text: result.text,
@@ -57,14 +59,15 @@ export async function setUpSpeechRecognizer(
     await recognizer.stopContinuousRecognitionAsync();
   }
 
-  console.log("Set up speech recognizer");
+  if (enableLogging) console.log("Set up speech recognizer");
   const audioConfig = sdk.AudioConfig.fromMicrophoneInput(deviceId);
   recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
   recognizer.recognizing = (speechRecognizerObject, speechRecognizerEvent) => {
-    console.log(
-      `RECOGNIZING ${speechRecognizerEvent.result.resultId}: Text=${speechRecognizerEvent.result.text}`
-    );
+    if (enableLogging)
+      console.log(
+        `RECOGNIZING ${speechRecognizerEvent.result.resultId}: Text=${speechRecognizerEvent.result.text}`
+      );
     const message = recognizerResultToCaption(
       speechRecognizerEvent.result,
       userId
@@ -75,7 +78,8 @@ export async function setUpSpeechRecognizer(
 
   recognizer.recognized = (speechRecognizerObject, speechRecognizerEvent) => {
     if (speechRecognizerEvent.result.reason == ResultReason.RecognizedSpeech) {
-      console.log(`RECOGNIZED: Text=${speechRecognizerEvent.result.text}`);
+      if (enableLogging)
+        console.log(`RECOGNIZED: Text=${speechRecognizerEvent.result.text}`);
       const message = recognizerResultToCaption(
         speechRecognizerEvent.result,
         userId
@@ -83,20 +87,24 @@ export async function setUpSpeechRecognizer(
       dispatch(addCaptionAction(message));
       listeners.forEach((fn) => fn(message));
     } else if (speechRecognizerEvent.result.reason == ResultReason.NoMatch) {
-      console.log("NOMATCH: Speech could not be recognized.");
+      if (enableLogging)
+        console.log("NOMATCH: Speech could not be recognized.");
     }
     currentPhraseId = uuid();
   };
 
   recognizer.canceled = (speechRecognizerObject, speechRecognizerEvent) => {
-    console.log(`CANCELED: Reason=${speechRecognizerEvent.reason}`);
+    if (enableLogging)
+      console.log(`CANCELED: Reason=${speechRecognizerEvent.reason}`);
 
     if (speechRecognizerEvent.reason == CancellationReason.Error) {
-      console.log(`"CANCELED: ErrorCode=${speechRecognizerEvent.errorCode}`);
-      console.log(
-        `"CANCELED: ErrorDetails=${speechRecognizerEvent.errorDetails}`
-      );
-      console.log("CANCELED: Did you update the subscription info?");
+      if (enableLogging) {
+        console.log(`"CANCELED: ErrorCode=${speechRecognizerEvent.errorCode}`);
+        console.log(
+          `"CANCELED: ErrorDetails=${speechRecognizerEvent.errorDetails}`
+        );
+        console.log("CANCELED: Did you update the subscription info?");
+      }
     }
 
     recognizer.stopContinuousRecognitionAsync();
@@ -106,7 +114,7 @@ export async function setUpSpeechRecognizer(
     speechRecognizerObject,
     speechRecognizerEvent
   ) => {
-    console.log("\n    Session stopped event.");
+    if (enableLogging) console.log("\n    Session stopped event.");
     recognizer.stopContinuousRecognitionAsync();
   };
 
