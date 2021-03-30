@@ -61,16 +61,6 @@ export async function setUpSignalR(
     }
   );
 
-  connection.on("text", (caption: Caption) => {
-    dispatch(receivedRemoteCaptionAction(caption));
-    sendWebSocketCaption(caption);
-  });
-
-  connection.on("updateDisplayName", (displayName: string, userId: string) => {
-    dispatch(updateDisplayNameAction(displayName, userId));
-    sendWebSocketDisplayName(displayName, userId);
-  });
-
   await connection.start();
 }
 

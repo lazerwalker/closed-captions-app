@@ -16,7 +16,7 @@ export async function initiateWebRTCConnection(
     console.log(event);
     sendIceCandidate(userId, recipient, event.candidate);
   });
-  connections[userId] = peerConnection;
+  connections[recipient] = peerConnection;
   const connectionOffer = await peerConnection.createOffer();
   peerConnection.setLocalDescription(connectionOffer);
   sendWebRTCConnectionOffer(userId, recipient, connectionOffer);

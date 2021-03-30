@@ -14,6 +14,13 @@ const httpTrigger: AzureFunction = async function (
     return;
   }
 
+  context.log(
+    "SendConnectOffer data",
+    sender,
+    req.body.recipient,
+    req.body.offer
+  );
+
   context.bindings.signalRMessages = [
     {
       target: "receiveOffer",
