@@ -16,7 +16,8 @@
       "type": "signalRConnectionInfo",
       "name": "connectionInfo",
       "hubName": "chat",
-      "direction": "in"
+      "direction": "in",
+      "userId": "{headers.x-ms-client-principal-id}"
     }
   ],
   "scriptFile": "../dist/negotiate/index.js"
