@@ -42,8 +42,6 @@ const App = () => {
       setUpSignalR(state.userId, dispatch);
 
       startWebSocket();
-
-      broadcastConnection(state.userId);
     }
     run();
   }, []);

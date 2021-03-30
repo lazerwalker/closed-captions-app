@@ -62,6 +62,8 @@ export async function setUpSignalR(
   );
 
   await connection.start();
+
+  await broadcastConnection(userId);
 }
 
 export async function broadcastConnection(userId: string): Promise<Response> {
