@@ -37,15 +37,18 @@ export async function setUpSignalR(
 
   connection.on("broadcast", (broadcastUserId: string) => {
     if (userId === broadcastUserId) return;
+    console.log("Received broadcast from", broadcastUserId);
     initiateWebRTCConnection(userId, broadcastUserId);
   });
 
   connection.on("receiveOffer", (sender: string, offerJSON: string) => {
+    console.log("Received offer from", sender);
     const offer = new RTCSessionDescription(JSON.parse(offerJSON));
     handleSentConnectionOffer(userId, sender, offer);
   });
 
   connection.on("receiveAnswer", (sender: string, answerJSON: string) => {
+    console.log("Received answer from", sender);
     const answer = new RTCSessionDescription(JSON.parse(answerJSON));
     handleSentConnectionAnswer(sender, answer);
   });

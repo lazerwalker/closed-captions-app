@@ -12,6 +12,8 @@ export async function initiateWebRTCConnection(
 ): Promise<void> {
   const peerConnection = new RTCPeerConnection();
   peerConnection.addEventListener("icecandidate", (event) => {
+    console.log("Received Ice candidate for recipient", recipient);
+    console.log(event);
     sendIceCandidate(userId, recipient, event.candidate);
   });
   connections[userId] = peerConnection;
@@ -29,6 +31,8 @@ export async function handleSentConnectionOffer(
   // set remote description
   const peerConnection = new RTCPeerConnection();
   peerConnection.addEventListener("icecandidate", (event) => {
+    console.log("Received Ice candidate for sender", sender);
+    console.log(event);
     sendIceCandidate(userId, sender, event.candidate);
   });
 
